@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
-import { Inter, Mrs_Saint_Delafield } from "next/font/google";
+import { Inter, Lexend, Mrs_Saint_Delafield } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+});
+
+const display = Lexend({
+  variable: "--font-lexend",
+  subsets: ["latin"],
+  weight: ["200", "300", "600"],
 });
 
 const script = Mrs_Saint_Delafield({
@@ -21,7 +27,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${script.variable}`} suppressHydrationWarning>
+    <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${display.variable} ${script.variable}`} suppressHydrationWarning>
       <body suppressHydrationWarning>{children}</body>
     </html>
   );

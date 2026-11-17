@@ -13,6 +13,17 @@ export default function Home() {
 
   return (
     <>
+      <div className="intro" aria-hidden="true">
+        <div className="intro-mark">
+          <svg className="intro-word" viewBox="0 0 520 110">
+            <text x="50%" y="92" textAnchor="middle">
+              WERROZA
+            </text>
+          </svg>
+          <span className="intro-script">Exquisite Tiles</span>
+          <span className="intro-rule" />
+        </div>
+      </div>
       <a className="skip" href="#main">
         Skip to content
       </a>
