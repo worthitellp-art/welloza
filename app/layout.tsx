@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
-import { Inter, Lexend, Mrs_Saint_Delafield } from "next/font/google";
+import { Mona_Sans, Montserrat_Alternates, Mrs_Saint_Delafield } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const body = Mona_Sans({
+  variable: "--font-body",
   subsets: ["latin"],
 });
 
-const display = Lexend({
-  variable: "--font-lexend",
+// Closest free match to the reference site's commercial "Marble" display face.
+const display = Montserrat_Alternates({
+  variable: "--font-display",
   subsets: ["latin"],
-  weight: ["200", "300", "600"],
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 const script = Mrs_Saint_Delafield({
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${display.variable} ${script.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${body.variable} ${display.variable} ${script.variable}`} suppressHydrationWarning>
       <body suppressHydrationWarning>{children}</body>
     </html>
   );

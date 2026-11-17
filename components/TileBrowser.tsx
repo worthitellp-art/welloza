@@ -1,5 +1,6 @@
 "use client";
 
+import { ScrollSmoother } from "gsap/ScrollSmoother";
 import Image from "next/image";
 import Link from "next/link";
 import { useDeferredValue, useMemo, useState } from "react";
@@ -53,12 +54,15 @@ export function TileBrowser({ tiles }: { tiles: TileCard[] }) {
   const reset = () => update(none);
   const goTo = (next: number) => {
     setPage(next);
-    document.getElementById("tile-results")?.scrollIntoView();
+    const results = document.getElementById("tile-results");
+    const smoother = ScrollSmoother.get();
+    if (results && smoother) smoother.scrollTo(results, true, "top 96px");
+    else results?.scrollIntoView();
   };
 
   return (
     <div className="listing">
-      <aside className="filters" aria-label="Filters">
+      <aside className="filters" aria-label="Filters" data-pin>
         <div className="filters-header">
           <h2>Filters</h2>
           {(f.query || f.collection || f.colour || f.finish) && (

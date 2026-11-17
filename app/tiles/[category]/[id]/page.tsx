@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
+import { Arrow, PageHeader, Site } from "@/components/Site";
 import { categories, contact, isCategory } from "@/lib/data";
 import { visibleTiles } from "@/lib/tiles";
 
@@ -33,16 +32,18 @@ export default async function TilePage({ params }: Props) {
   const enquiry = encodeURIComponent(`Hello Werroza Ceramic, I am interested in the ${tile.name} tile (${tile.collection}).`);
 
   return (
-    <>
-      <Header />
-      <main className="collection-page tile-detail">
-        <Link className="collection-back" href={`/tiles/${category}`}>
-          &larr; {categories[category]}
-        </Link>
+    <Site>
+      <PageHeader
+        title={tile.name}
+        trail={[
+          { label: "All Tiles", href: "/tiles" },
+          { label: categories[category], href: `/tiles/${category}` },
+        ]}
+      />
+      <div className="collection-page tile-detail">
         <div className="tile-detail-grid">
           <Image src={tile.image} alt={`${tile.name} tile`} width={1000} height={1000} sizes="(min-width: 900px) 40vw, 100vw" priority unoptimized />
           <div>
-            <h1>{tile.name}</h1>
             <dl>
               <dt>Collection</dt>
               <dd>{tile.collection}</dd>
@@ -52,7 +53,12 @@ export default async function TilePage({ params }: Props) {
               <dd>{tile.colour}</dd>
             </dl>
             <a className="btn" href={`https://wa.me/${contact.phones[0].wa}?text=${enquiry}`} target="_blank" rel="noopener noreferrer">
-              Enquire on WhatsApp
+              <span className="btn-text">
+                <span>Enquire on WhatsApp</span>
+              </span>
+              <span className="btn-icon">
+                <Arrow />
+              </span>
             </a>
             {tile.catalogue && (
               <p>
@@ -67,8 +73,7 @@ export default async function TilePage({ params }: Props) {
             <Image src={tile.room} alt={`${tile.name} tile in a room`} width={1600} height={1132} sizes="100vw" unoptimized />
           </section>
         )}
-      </main>
-      <Footer />
-    </>
+      </div>
+    </Site>
   );
 }

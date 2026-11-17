@@ -1,15 +1,46 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
-import { Hero } from "@/components/Hero";
+import { Arrow, Icon, Site } from "@/components/Site";
 import { catalogues, pageImage } from "@/lib/catalogues";
-import { categories, contact, type Category } from "@/lib/data";
+import { categories, features, slug, trustPoints, type Category } from "@/lib/data";
 import { catalogueTiles } from "@/lib/tiles";
 
+const room = (catalogue: string, page: number) => pageImage(catalogue, page);
+
+const heroSlides = [room("rock-aura", 11), room("glossy-1", 7), room("bookmatch", 4), room("monolux", 7)];
+
+const categoryImages: Record<Category, string> = {
+  "marble-glossy": room("pearl", 7),
+  "decor-feature": room("three-d", 11),
+  "fullbody-natural": room("travertino", 7),
+};
+
+const featured = ["infinite-1", "three-d", "travertino"].flatMap((s) => catalogues.filter((c) => c.slug === s));
+const featureList = features.filter(([name]) => ["spark", "sun", "grip", "flask", "umbrella", "shield", "heat", "frost"].includes(name));
+const slabs = ["Massina Elite", "Melvin Panda", "Lasa Brown"];
+const swatches = ["Onyx Natural", "Leaves Blue", "Marbo Mix", "Opal Cloud"];
+const fmt = new Intl.NumberFormat("en-IN");
+
+function CircleLink({ href, text, label, className = "" }: { href: string; text: string; label: string; className?: string }) {
+  return (
+    <Link className={`circle-link ${className}`} href={href} aria-label={label}>
+      <svg className="circle-text" viewBox="0 0 200 200" aria-hidden="true">
+        <defs>
+          <path id={`c-${slug(label)}`} d="M100 100m-78 0a78 78 0 1 1 156 0a78 78 0 1 1-156 0" />
+        </defs>
+        <text>
+          <textPath href={`#c-${slug(label)}`} textLength="488">
+            {text}
+          </textPath>
+        </text>
+      </svg>
+      <Arrow />
+    </Link>
+  );
+}
+
 export default function Home() {
-  const waUrl = (number: string) =>
-    `https://wa.me/${number.replace(/[^0-9]/g, "")}?text=Hello%20Werroza%20Ceramic%2C%20I%20am%20interested%20in%20your%20600x1200%20mm%20tiles%20collection.`;
+  const designs = catalogueTiles.length;
 
   return (
     <>
@@ -24,80 +55,244 @@ export default function Home() {
           <span className="intro-rule" />
         </div>
       </div>
-      <a className="skip" href="#main">
-        Skip to content
-      </a>
-      <Header />
 
-      <main id="main" suppressHydrationWarning>
-        <Hero />
+      <Site>
+        <section className="hero" aria-labelledby="hero-title">
+          <div className="hero-slides" aria-hidden="true">
+            {heroSlides.map((src, i) => (
+              <Image key={src} src={src} alt="" fill sizes="100vw" priority={i === 0} unoptimized />
+            ))}
+          </div>
+          <h1 id="hero-title" className="hero-title text-anim" data-delay="2.4">
+            Exquisite
+            <br />
+            Surfaces
+          </h1>
+        </section>
 
-        <section className="collections-sec" id="designs" aria-labelledby="categories-title">
-          <h2 id="categories-title">Shop by Category</h2>
-          <p>
-            {catalogueTiles.length.toLocaleString("en-IN")} tile designs. <Link href="/tiles">Browse all tiles</Link>
-          </p>
-          <div className="category-cards">
-            {(Object.entries(categories) as [Category, string][]).map(([value, label]) => {
-              const tiles = catalogueTiles.filter((t) => t.category === value);
-              return (
-                <Link className="category-card" href={`/tiles/${value}`} key={value}>
-                  <Image src={tiles[0].image} alt="" width={480} height={480} sizes="(min-width: 700px) 33vw, 100vw" unoptimized />
-                  <b>{label}</b>
-                  <span>{tiles.length.toLocaleString("en-IN")} tiles</span>
-                </Link>
-              );
-            })}
+        <section className="sec about-home" aria-labelledby="about-title">
+          <div className="wrap">
+            <div className="split-head">
+              <p className="sub-title" data-anim="up" data-delay=".3">
+                About Werroza
+              </p>
+              <h2 id="about-title" className="title-highlight">
+                Crafting Large Format Tiles In Morbi For Walls And Floors That Make Every Space Feel Complete
+              </h2>
+            </div>
+            <div className="about-row">
+              <div className="about-disc" data-anim="zoom">
+                <Image src="/images/about.jpg" alt="Werroza Ceramic tiles laid in a living space" width={496} height={496} unoptimized />
+              </div>
+              <div className="about-items">
+                <div className="about-counter">
+                  <p className="big">
+                    <span data-count={designs}>{fmt.format(designs)}</span>
+                    <sup>+</sup>
+                  </p>
+                  <p>Tile designs across {catalogues.length} collections</p>
+                </div>
+                <div className="about-desc">
+                  <p>
+                    At Werroza Ceramic we bring design, technology and Morbi&apos;s tile-making craft together. Every
+                    600 &times; 1200 mm slab is pressed, printed and polished for consistent shade, sharp detail and a
+                    finish that lasts in homes, showrooms and commercial spaces.
+                  </p>
+                  <Link className="btn" href="/about" data-anim="up" data-delay=".6">
+                    <span className="btn-text">
+                      <span>Learn More</span>
+                    </span>
+                    <span className="btn-icon">
+                      <Arrow />
+                    </span>
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
-        <section className="collections-sec" id="collections" aria-labelledby="collections-title">
-          <h2 id="collections-title">Full Catalogues</h2>
-          <p>
-            {catalogues.length} complete catalogues with {catalogues.reduce((n, c) => n + c.pages, 0).toLocaleString("en-IN")} pages of tiles and room views.
-          </p>
-          <div className="collections">
-            {catalogues.map((c) => (
-              <Link className="collection" href={`/collections/${c.slug}`} key={c.slug}>
-                <Image
-                  src={pageImage(c.slug, 1, true)}
-                  alt=""
-                  width={c.width}
-                  height={c.height}
-                  sizes="(min-width: 1100px) 25vw, (min-width: 700px) 33vw, 50vw"
-                  unoptimized
-                />
-                <b>{c.title}</b>
-                <span>{c.pages} pages</span>
-              </Link>
+        <section className="choose gx" aria-labelledby="choose-title">
+          <div className="choose-img" data-anim="left-big" data-delay=".3">
+            <Image src={room("bookmatch", 7)} alt="" fill sizes="(min-width: 1000px) 50vw, 100vw" unoptimized data-speed="auto" />
+          </div>
+          <div className="choose-body">
+            <p className="sub-title" data-anim="up" data-delay=".3">
+              Why Werroza
+            </p>
+            <h2 id="choose-title" className="title-highlight">
+              Smart Engineering For Modern Walls And Floors
+            </h2>
+            <ul className="choose-list">
+              {trustPoints.map(([icon, title, text], i) => (
+                <li key={title} data-anim="up" data-delay={0.3 + i * 0.1}>
+                  <span className="choose-icon">
+                    <Icon name={icon} />
+                  </span>
+                  <div>
+                    <h3>{title}</h3>
+                    <p>{text}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section className="sec projects" aria-labelledby="projects-title">
+          <div className="sec-head center">
+            <p className="sub-title" data-anim="up" data-delay=".3">
+              Tile Solutions
+            </p>
+            <h2 id="projects-title" className="title-highlight">
+              Precision Crafted Designs <br />
+              That Redefine Modern Spaces
+            </h2>
+          </div>
+          <div className="project-grid">
+            {(Object.entries(categories) as [Category, string][]).map(([value, label], i) => (
+              <article className="project" key={value} data-anim="up" data-delay={0.2 + i * 0.1}>
+                <Link className="project-img" href={`/tiles/${value}`} tabIndex={-1} aria-hidden="true">
+                  <Image src={categoryImages[value]} alt="" width={800} height={566} sizes="(min-width: 1000px) 33vw, 100vw" unoptimized />
+                </Link>
+                <div className="project-body">
+                  <span className="tag">Werroza</span>
+                  <div className="project-text">
+                    <h3>
+                      <Link href={`/tiles/${value}`}>{label}</Link>
+                    </h3>
+                    <Link className="icon-btn" href={`/tiles/${value}`} tabIndex={-1} aria-hidden="true">
+                      <Arrow />
+                    </Link>
+                  </div>
+                </div>
+              </article>
             ))}
           </div>
         </section>
 
-      </main>
+        <section className="deliver gx" aria-labelledby="deliver-title">
+          <Image className="deliver-bg" src={room("three-d", 11)} alt="" fill sizes="100vw" unoptimized />
+          <div className="deliver-inner">
+            <h2 id="deliver-title" className="deliver-title text-anim">
+              <span>Delivering</span>
+              <span>
+                <svg className="verified" viewBox="0 0 24 24" aria-hidden="true" data-anim="zoom" data-delay="1">
+                  <path d="M12 2l2.4 1.8 3-.2.9 2.8 2.5 1.7-1 2.9 1 2.9-2.5 1.7-.9 2.8-3-.2L12 22l-2.4-1.8-3 .2-.9-2.8-2.5-1.7 1-2.9-1-2.9 2.5-1.7.9-2.8 3 .2z" />
+                  <path d="M8 12l3 3 5-6" />
+                </svg>
+                Trusted
+              </span>
+              <span>Surfaces</span>
+            </h2>
+            <div className="deliver-slabs" aria-hidden="true">
+              {slabs.map((name, i) => (
+                <div className="slab" key={name} data-anim="up-big" data-delay={0.6 + i * 0.15}>
+                  <Image src={`/images/designs/${slug(name)}.jpg`} alt="" width={280} height={565} unoptimized />
+                </div>
+              ))}
+            </div>
+            <div className="deliver-box">
+              <ul aria-hidden="true">
+                {swatches.map((name, i) => (
+                  <li key={name} data-anim="left" data-delay={0.5 + i * 0.1}>
+                    <Image src={`/images/designs/${slug(name)}.jpg`} alt="" width={64} height={64} unoptimized />
+                  </li>
+                ))}
+              </ul>
+              <div data-anim="left" data-delay=".9">
+                <p className="deliver-count">
+                  <span data-count={designs}>{fmt.format(designs)}</span>+ designs
+                </p>
+                <p>In {catalogues.length} complete collections</p>
+              </div>
+            </div>
+            <CircleLink
+              className="deliver-circle"
+              href="/e-catalogue"
+              label="Browse the e-catalogue"
+              text="WERROZA • EXQUISITE TILES • MORBI • "
+            />
+          </div>
+        </section>
 
-      {/* Modern Responsive Luxury Architectural Footer */}
-      <Footer />
+        <section className="sec feats gx" aria-labelledby="feats-title">
+          <div className="feat-grid">
+            <div className="feat-head">
+              <p className="sub-title" data-anim="up" data-delay=".3">
+                Product Features
+              </p>
+              <h2 id="feats-title" className="title-highlight">
+                Engineered For Excellence
+              </h2>
+            </div>
+            {featureList.map(([icon, label], i) => (
+              <div className="feat" key={label} data-anim="right-big" data-delay={0.2 + (i % 4) * 0.1}>
+                <span className="feat-icon">
+                  <Icon name={icon} />
+                </span>
+                <h3>{label}</h3>
+              </div>
+            ))}
+            <div className="feat-action" data-anim="right-big" data-delay=".8">
+              <CircleLink href="/tiles" label="View all tiles" text="VIEW ALL TILES • VIEW ALL TILES • " />
+            </div>
+          </div>
+        </section>
 
-      {/* Floating 1-Click WhatsApp Quick Action */}
-      <a
-        className="float-wa"
-        href={waUrl(contact.phone)}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Direct WhatsApp Chat with Werroza Ceramic"
-        title="Chat with Werroza Ceramic on WhatsApp"
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M17.472 14.382c-.301-.15-1.78-.879-2.056-.979-.276-.1-.476-.15-.676.15-.2.301-.777.979-.953 1.18-.175.2-.351.226-.652.075-.301-.15-1.272-.469-2.423-1.496-.895-.799-1.5-1.787-1.675-2.088-.176-.301-.019-.464.132-.614.135-.135.301-.351.451-.527.151-.175.201-.301.301-.501.101-.2.05-.376-.025-.526-.075-.15-.676-1.63-.927-2.232-.244-.587-.492-.507-.676-.516l-.577-.01c-.2 0-.526.075-.802.376-.276.301-1.053 1.028-1.053 2.508 0 1.48 1.078 2.909 1.229 3.11.15.2 2.122 3.24 5.141 4.544.718.31 1.279.496 1.716.635.722.23 1.38.197 1.899.12.579-.087 1.78-.727 2.031-1.43.251-.702.251-1.304.175-1.43-.075-.125-.276-.201-.577-.351zM12.04 2C6.51 2 2.02 6.49 2.02 12.02c0 1.94.55 3.75 1.51 5.29L2 22l4.83-1.5c1.48.88 3.2 1.38 5.21 1.38 5.53 0 10.02-4.49 10.02-10.02C22.06 6.49 17.57 2 12.04 2z" />
-        </svg>
-      </a>
+        <section className="cta gx" aria-label="E-catalogue">
+          <Image className="cta-bg" src={room("bookmatch", 4)} alt="" fill sizes="100vw" unoptimized />
+          <h2 className="cta-title text-anim">
+            <span>Exquisite</span>{" "}
+            <span className="cta-img" data-anim="up" data-delay=".3">
+              <Image src={room("glossy-1", 7)} alt="" width={260} height={130} unoptimized />
+              <Link className="icon-btn" href="/e-catalogue" aria-label="Open the e-catalogue">
+                <Arrow />
+              </Link>
+            </span>{" "}
+            <span>Catalogue</span>
+          </h2>
+        </section>
 
-      <a className="totop" href="#top" aria-label="Back to top">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 20V4M5 11l7-7 7 7" />
-        </svg>
-      </a>
+        <section className="sec blogs" aria-labelledby="blogs-title">
+          <div className="wrap">
+            <div className="sec-head center">
+              <p className="sub-title" data-anim="up" data-delay=".3">
+                Latest Collections
+              </p>
+              <h2 id="blogs-title" className="title-highlight">
+                Ideas, Inspiration And Collections For Every Space
+              </h2>
+            </div>
+            <div className="blog-grid">
+              {featured.map((c) => (
+                <article className="blog" key={c.slug} data-anim="up" data-delay=".4">
+                  <div className="blog-thumb">
+                    <Link href={`/collections/${c.slug}`} tabIndex={-1} aria-hidden="true">
+                      <Image src={pageImage(c.slug, 1)} alt="" width={c.width} height={c.height} sizes="(min-width: 1000px) 33vw, 100vw" unoptimized />
+                    </Link>
+                    <p className="blog-date">
+                      <b>{c.pages}</b>
+                      <span>Pages</span>
+                    </p>
+                  </div>
+                  <div className="blog-body">
+                    <h3>
+                      <Link href={`/collections/${c.slug}`}>{c.title}</Link>
+                    </h3>
+                    <Link className="text-btn" href={`/collections/${c.slug}`} aria-label={`View the ${c.title} catalogue`}>
+                      <span>View Catalogue</span>
+                      <span className="btn-icon">
+                        <Arrow />
+                      </span>
+                    </Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      </Site>
     </>
   );
 }

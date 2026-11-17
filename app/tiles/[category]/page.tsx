@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
+import { PageHeader, Site } from "@/components/Site";
 import { TileBrowser } from "@/components/TileBrowser";
 import { categories, isCategory } from "@/lib/data";
 import { toCard, visibleTiles } from "@/lib/tiles";
@@ -26,16 +25,18 @@ export default async function CategoryPage({ params }: Props) {
   const tiles = (await visibleTiles()).filter((t) => t.category === category);
 
   return (
-    <>
-      <Header />
-      <main className="collection-page">
-        <Link className="collection-back" href="/tiles">
-          &larr; All tiles
-        </Link>
-        <h1>{categories[category]}</h1>
+    <Site>
+      <PageHeader title={categories[category]} trail={[{ label: "All Tiles", href: "/tiles" }]} />
+      <div className="collection-page">
+        <nav className="category-tabs" aria-label="Categories">
+          {Object.entries(categories).map(([value, label]) => (
+            <Link key={value} href={`/tiles/${value}`} aria-current={value === category ? "page" : undefined}>
+              {label}
+            </Link>
+          ))}
+        </nav>
         <TileBrowser tiles={tiles.map(toCard)} />
-      </main>
-      <Footer />
-    </>
+      </div>
+    </Site>
   );
 }

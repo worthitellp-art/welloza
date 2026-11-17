@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CatalogueViewer } from "@/components/CatalogueViewer";
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
+import { Arrow, PageHeader, Site } from "@/components/Site";
 import { catalogues } from "@/lib/catalogues";
 import { contact } from "@/lib/data";
 
@@ -33,13 +31,9 @@ export default async function CollectionPage({ params }: Props) {
   const enquiry = encodeURIComponent(`Hello Werroza Ceramic, I am interested in your ${catalogue.title}.`);
 
   return (
-    <>
-      <Header />
-      <main className="collection-page">
-        <Link className="collection-back" href="/#collections">
-          &larr; All collections
-        </Link>
-        <h1>{catalogue.title}</h1>
+    <Site>
+      <PageHeader title={catalogue.title} trail={[{ label: "E-Catalogue", href: "/e-catalogue" }]} />
+      <div className="collection-page">
         <p>{catalogue.pages} pages. Select a page to view it full size.</p>
         <a
           className="btn"
@@ -47,11 +41,15 @@ export default async function CollectionPage({ params }: Props) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Enquire on WhatsApp
+          <span className="btn-text">
+            <span>Enquire on WhatsApp</span>
+          </span>
+          <span className="btn-icon">
+            <Arrow />
+          </span>
         </a>
         <CatalogueViewer catalogue={catalogue} />
-      </main>
-      <Footer />
-    </>
+      </div>
+    </Site>
   );
 }
